@@ -12,6 +12,7 @@ export default class Home extends React.Component {
       ],
       virus: "",
       inputlength: 0,
+      result: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -59,24 +60,30 @@ export default class Home extends React.Component {
     this.setState({ [name]: value });
   };
 
+  onReset = (e) => {
+    this.setState({ result: [] });
+    window.location.reload();
+  };
+
   handleSubmit(event) {
     event.preventDefault();
     const virus1 = this.state.virus;
     console.log(virus1);
     const users1 = this.state.users;
     console.log(users1);
-    if (users1 > 1) {
-      for (let i = 0; i <= users1.length; i++) {
-        this.isVirusComibnation(virus1, users1[i].composition);
-      }
-    } else {
-      this.isVirusComibnation(virus1, users1.composition);
+
+    for (let i = 0; i < users1.length; i++) {
+      this.isVirusComibnation(`${virus1}`, users1[i].composition);
     }
+
+    this.setState({ ...this.state.result });
+    console.log(this.state.result);
   }
 
   isVirusComibnation(virusName, compositionName) {
     let x = 0;
     let y = 0;
+
     while (x < virusName.length && y < compositionName.length) {
       if (virusName[x] === compositionName[y]) {
         x++;
@@ -87,8 +94,10 @@ export default class Home extends React.Component {
     }
     if (y === compositionName.length) {
       console.log("POSITIVE");
+      this.state.result.push("POSITIVE");
     } else {
       console.log("NEGETIVE");
+      this.state.result.push("NEGETIVE");
     }
   }
 
@@ -118,7 +127,23 @@ export default class Home extends React.Component {
             onClick={this.addClick.bind(this)}
           />
           <input type="submit" value="Submit" />
+          <input
+            type="button"
+            value="Reset"
+            onClick={this.onReset.bind(this)}
+          />
         </form>
+
+        {this.state.result ? (
+          <div align="center">
+            <h2>Result</h2>
+            {this.state.result.map((item) => (
+              <p key={item}> {item} </p>
+            ))}
+          </div>
+        ) : (
+          <div className="Homepage"></div>
+        )}
       </div>
     );
   }
